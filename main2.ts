@@ -1,9 +1,9 @@
 console.log("Hellow World");
 
-function startTimer(duration:number){
+function startTimer2(duration:number){
     let timer=duration;
     const intervalId=setInterval(()=>{},1000);
 }
 
 
-startTimer(5*60);
+startTimer2(5*60);
