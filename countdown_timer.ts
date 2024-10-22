@@ -27,14 +27,12 @@
   #timeInput {
     width: 80%;
     font-size: 1.5em;
-    padding: 10px;
+    padding: 15px 25px;
     margin-bottom: 20px;
     text-align: center;
   }
   
-  #startStopButton, #resetButton {
-    width: 45%;
-    font-size: 1.5em;
+  #startStopButton, #resetButton {width: 50%; font-size: 1.4em;
     padding: 10px;
     margin: 10px;
     cursor: pointer;
