@@ -3,6 +3,24 @@
   <button id="pauseButton">一時停止</button>
   <button id="resetButton">リセット</button>
   <div id="timerDisplay">05:00</div>
+  <div id="progressBarContainer">
+    <div id="progressBar"></div>
+  </div>
 </div>
+
+<style>
+  #progressBarContainer {
+    width: 100%;
+    height: 20px;
+    background-color: #f3f3f3;
+    border: 1px solid #ccc;
+    margin-top: 10px;
+  }
+  #progressBar {
+    width: 100%;
+    height: 100%;
+    background-color: #4caf50;
+  }
+</style>
 
 <script src="countdown_timer.js" defer></script>
