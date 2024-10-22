@@ -23,6 +23,24 @@
     height: 100%;
     background-color: #4caf50;
   }
+  
+  #progressBar.blinking {
+    animation: blink 1s infinite alternate;
+  }
+
+  @keyframes blink {
+    0% { background-color: #4caf50; }
+    100% { background-color: #d4ffd4; }
+  }
+
+  #progressBar.warning {
+    animation: warningBlink 1s infinite alternate;
+  }
+
+  @keyframes warningBlink {
+    0% { background-color: #ff5252; }
+    100% { background-color: #ffdada; }
+  }
 </style>
 
 <script src="countdown_timer.js" defer></script>
@@ -58,11 +76,26 @@ document.addEventListener('DOMContentLoaded', () => {
       const progressPercentage = (timer / initialTime) * 100;
       progressBar.style.width = `${progressPercentage}%`;
 
+      // 残り20%以下の場合、警告色で点滅させる
+      if (progressPercentage <= 20) {
+        progressBar.classList.add('warning');
+        progressBar.classList.remove('blinking');
+      } else {
+        progressBar.classList.remove('warning');
+        if (isRunning) {
+          progressBar.classList.add('blinking');
+        } else {
+          progressBar.classList.remove('blinking');
+        }
+      }
+
       if (timer < 0) {
         clearInterval(intervalId!);
         intervalId = null;
         timerDisplay.textContent = 'タイマーが終了しました！';
         progressBar.style.width = '0%';
+        progressBar.classList.remove('blinking');
+        progressBar.classList.remove('warning');
         isRunning = false;
       }
     }, 1000);
@@ -92,6 +125,8 @@ document.addEventListener('DOMContentLoaded', () => {
     remainingTime = initialTime;
     timerDisplay.textContent = '5:00';
     progressBar.style.width = '100%';
+    progressBar.classList.remove('blinking');
+    progressBar.classList.remove('warning');
     isRunning = false;
   });
 });
