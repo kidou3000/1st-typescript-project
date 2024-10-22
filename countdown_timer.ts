@@ -130,6 +130,13 @@ document.addEventListener('DOMContentLoaded', () => {
       startTimer(remainingTime);
       isRunning = true;
       progressBar.classList.add('blinking');
+
+      // 終了時のタイトル点滅を止め、元に戻す
+      if (blinkTitleIntervalId !== null) {
+        clearInterval(blinkTitleIntervalId);
+        blinkTitleIntervalId = null;
+        document.title = originalTitle;
+      }
     } else {
       // タイマーをストップする
       if (intervalId !== null) {
