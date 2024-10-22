@@ -2,6 +2,7 @@
 // まず、HTML 側に以下のような要素を用意してね。
 /*
 <div>
+  <input type="number" id="timeInput" placeholder="分を入力" min="1">
   <button id="startStopButton">スタート / ストップ</button>
   <button id="resetButton">リセット</button>
   <div id="timerDisplay">05:00</div>
@@ -51,11 +52,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const startStopButton = document.getElementById('startStopButton') as HTMLButtonElement;
   const resetButton = document.getElementById('resetButton') as HTMLButtonElement;
   const progressBar = document.getElementById('progressBar') as HTMLDivElement;
+  const timeInput = document.getElementById('timeInput') as HTMLInputElement;
 
   let intervalId: number | null = null;
   let remainingTime = 300; // 初期設定5分（300秒）
-  const initialTime = 300;
+  let initialTime = 300;
   let isRunning = false;
+  const originalTitle = document.title;
+  let blinkTitleIntervalId: number | null = null;
 
   // 初期表示を5分に設定
   timerDisplay.textContent = '5:00';
@@ -71,6 +75,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const minutes = Math.floor(timer / 60);
       const seconds = timer % 60;
       timerDisplay.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+      // ブラウザのタブのタイトルを更新
+      document.title = `残り時間: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 
       // プログレスバーの更新
       const progressPercentage = (timer / initialTime) * 100;
@@ -97,15 +104,32 @@ document.addEventListener('DOMContentLoaded', () => {
         progressBar.classList.remove('blinking');
         progressBar.classList.remove('warning');
         isRunning = false;
+
+        // タイマー終了時にタブのタイトルを点滅させる
+        if (blinkTitleIntervalId === null) {
+          let showOriginalTitle = true;
+          blinkTitleIntervalId = window.setInterval(() => {
+            document.title = showOriginalTitle ? 'タイマーが終了しました！' : '🔔 タイマー終了! 🔔';
+            showOriginalTitle = !showOriginalTitle;
+          }, 1000);
+        }
       }
     }, 1000);
   }
 
   startStopButton.addEventListener('click', () => {
     if (!isRunning) {
+      // タイマーの初期設定をユーザー入力から取得する
+      const userInput = parseInt(timeInput.value, 10);
+      if (!isNaN(userInput) && userInput > 0) {
+        initialTime = userInput * 60;
+        remainingTime = initialTime;
+        timerDisplay.textContent = `${userInput}:00`;
+      }
       // タイマーをスタートする
       startTimer(remainingTime);
       isRunning = true;
+      progressBar.classList.add('blinking');
     } else {
       // タイマーをストップする
       if (intervalId !== null) {
@@ -113,20 +137,36 @@ document.addEventListener('DOMContentLoaded', () => {
         intervalId = null;
       }
       isRunning = false;
+      progressBar.classList.remove('blinking');
+      // タブのタイトルを元に戻す
+      document.title = originalTitle;
+      if (blinkTitleIntervalId !== null) {
+        clearInterval(blinkTitleIntervalId);
+        blinkTitleIntervalId = null;
+        document.title = originalTitle;
+      }
     }
   });
 
   resetButton.addEventListener('click', () => {
-    // リセットボタンを押すとタイマーを5:00に戻す
+    // リセットボタンを押すとタイマーを初期設定に戻す
     if (intervalId !== null) {
       clearInterval(intervalId);
       intervalId = null;
     }
     remainingTime = initialTime;
-    timerDisplay.textContent = '5:00';
+    const minutes = Math.floor(initialTime / 60);
+    timerDisplay.textContent = `${minutes}:00`;
     progressBar.style.width = '100%';
     progressBar.classList.remove('blinking');
     progressBar.classList.remove('warning');
     isRunning = false;
+    // タブのタイトルを元に戻す
+    document.title = originalTitle;
+    if (blinkTitleIntervalId !== null) {
+      clearInterval(blinkTitleIntervalId);
+      blinkTitleIntervalId = null;
+      document.title = originalTitle;
+    }
   });
 });
