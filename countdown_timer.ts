@@ -3,6 +3,8 @@
 /*
 <div>
   <button id="startButton">スタート</button>
+  <button id="pauseButton">一時停止</button>
+  <button id="resetButton">リセット</button>
   <div id="timerDisplay">05:00</div>
 </div>
 
@@ -12,8 +14,11 @@
 document.addEventListener('DOMContentLoaded', () => {
   const timerDisplay = document.getElementById('timerDisplay') as HTMLDivElement;
   const startButton = document.getElementById('startButton') as HTMLButtonElement;
+  const pauseButton = document.getElementById('pauseButton') as HTMLButtonElement;
+  const resetButton = document.getElementById('resetButton') as HTMLButtonElement;
 
   let intervalId: number | null = null;
+  let remainingTime = 300; // 初期設定5分（300秒）
 
   // 初期表示を5分に設定
   timerDisplay.textContent = '5:00';
@@ -25,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let timer = duration;
     intervalId = window.setInterval(() => {
       timer--;
+      remainingTime = timer;
       const minutes = Math.floor(timer / 60);
       const seconds = timer % 60;
       timerDisplay.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
@@ -38,7 +44,25 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   startButton.addEventListener('click', () => {
-    // ボタンを押すと5分（300秒）のカウントダウンがスタートする
-    startTimer(300);
+    // ボタンを押すと現在の残り時間（初期は5分）のカウントダウンがスタートする
+    startTimer(remainingTime);
+  });
+
+  pauseButton.addEventListener('click', () => {
+    // 一時停止ボタンを押すとタイマーを停止する
+    if (intervalId !== null) {
+      clearInterval(intervalId);
+      intervalId = null;
+    }
+  });
+
+  resetButton.addEventListener('click', () => {
+    // リセットボタンを押すとタイマーを5:00に戻す
+    if (intervalId !== null) {
+      clearInterval(intervalId);
+      intervalId = null;
+    }
+    remainingTime = 300;
+    timerDisplay.textContent = '5:00';
   });
 });
