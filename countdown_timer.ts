@@ -2,7 +2,8 @@
 // まず、HTML 側に以下のような要素を用意してね。
 /*
 <div>
-  <div id="timerDisplay">00:00</div>
+  <button id="startButton">スタート</button>
+  <div id="timerDisplay">05:00</div>
 </div>
 
 <script src="countdown_timer.js" defer></script>
@@ -10,8 +11,12 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   const timerDisplay = document.getElementById('timerDisplay') as HTMLDivElement;
+  const startButton = document.getElementById('startButton') as HTMLButtonElement;
 
   let intervalId: number | null = null;
+
+  // 初期表示を5分に設定
+  timerDisplay.textContent = '5:00';
 
   function startTimer(duration: number) {
     if (intervalId !== null) {
@@ -32,6 +37,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 1000);
   }
 
-  // 固定のカウントダウン時間（例えば5分 = 300秒）
-  startTimer(300);
+  startButton.addEventListener('click', () => {
+    // ボタンを押すと5分（300秒）のカウントダウンがスタートする
+    startTimer(300);
+  });
 });
