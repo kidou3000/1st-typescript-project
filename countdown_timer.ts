@@ -1,10 +1,8 @@
-// Progressバー
 // HTML と TypeScript を連携して、ブラウザ上で動くシンプルなカウントダウンタイマー
 // まず、HTML 側に以下のような要素を用意してね。
 /*
 <div>
-  <button id="startButton">スタート</button>
-  <button id="pauseButton">一時停止</button>
+  <button id="startStopButton">スタート / ストップ</button>
   <button id="resetButton">リセット</button>
   <div id="timerDisplay">05:00</div>
   <div id="progressBarContainer">
@@ -32,14 +30,14 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   const timerDisplay = document.getElementById('timerDisplay') as HTMLDivElement;
-  const startButton = document.getElementById('startButton') as HTMLButtonElement;
-  const pauseButton = document.getElementById('pauseButton') as HTMLButtonElement;
+  const startStopButton = document.getElementById('startStopButton') as HTMLButtonElement;
   const resetButton = document.getElementById('resetButton') as HTMLButtonElement;
   const progressBar = document.getElementById('progressBar') as HTMLDivElement;
 
   let intervalId: number | null = null;
   let remainingTime = 300; // 初期設定5分（300秒）
   const initialTime = 300;
+  let isRunning = false;
 
   // 初期表示を5分に設定
   timerDisplay.textContent = '5:00';
@@ -65,20 +63,23 @@ document.addEventListener('DOMContentLoaded', () => {
         intervalId = null;
         timerDisplay.textContent = 'タイマーが終了しました！';
         progressBar.style.width = '0%';
+        isRunning = false;
       }
     }, 1000);
   }
 
-  startButton.addEventListener('click', () => {
-    // ボタンを押すと現在の残り時間（初期は5分）のカウントダウンがスタートする
-    startTimer(remainingTime);
-  });
-
-  pauseButton.addEventListener('click', () => {
-    // 一時停止ボタンを押すとタイマーを停止する
-    if (intervalId !== null) {
-      clearInterval(intervalId);
-      intervalId = null;
+  startStopButton.addEventListener('click', () => {
+    if (!isRunning) {
+      // タイマーをスタートする
+      startTimer(remainingTime);
+      isRunning = true;
+    } else {
+      // タイマーをストップする
+      if (intervalId !== null) {
+        clearInterval(intervalId);
+        intervalId = null;
+      }
+      isRunning = false;
     }
   });
 
@@ -91,5 +92,6 @@ document.addEventListener('DOMContentLoaded', () => {
     remainingTime = initialTime;
     timerDisplay.textContent = '5:00';
     progressBar.style.width = '100%';
+    isRunning = false;
   });
 });
