@@ -5,8 +5,9 @@ import * as readline from 'readline';
 
 // Step 1: 数当てゲーム（シンプルなロジックを使ってみよう）
 
-// ランダムな数字を生成する
-const secretNumber = Math.floor(Math.random() * 10) + 1;
+let stage = 1;
+let range = 10;
+let secretNumber = Math.floor(Math.random() * range) + 1;
 let attempts = 0;
 const maxAttempts = 4;
 
@@ -14,8 +15,13 @@ const maxAttempts = 4;
 function guessNumber(playerGuess: number) {
   attempts++;
   if (playerGuess === secretNumber) {
-    console.log("やったね！正解だよ〜♪\nゲームクリア！おめでとう！");
-    rl.close();
+    console.log(`やったね！正解だよ〜♪\nゲームクリア！ステージ ${stage} クリア！`);
+    stage++;
+    range += 2;
+    secretNumber = Math.floor(Math.random() * range) + 1;
+    attempts = 0;
+    console.log(`次はステージ ${stage} だよ！範囲は 1 から ${range} までになったよ。`);
+    promptGuess();
   } else if (attempts >= maxAttempts) {
     console.log(`残念だったね…正解は ${secretNumber} だったよ。またチャレンジしてね！\nゲームオーバー…`);
     rl.close();
