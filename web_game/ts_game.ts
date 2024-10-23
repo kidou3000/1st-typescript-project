@@ -7,17 +7,23 @@ import * as readline from 'readline';
 
 // ランダムな数字を生成する
 const secretNumber = Math.floor(Math.random() * 10) + 1;
+let attempts = 0;
+const maxAttempts = 4;
 
 // プレイヤーの推測を受け取る関数
 function guessNumber(playerGuess: number) {
+  attempts++;
   if (playerGuess === secretNumber) {
-    console.log("おめでとう！正解です！");
+    console.log("やったね！正解だよ〜♪");
+    rl.close();
+  } else if (attempts >= maxAttempts) {
+    console.log(`残念だったね…正解は ${secretNumber} だったよ。またチャレンジしてね！`);
     rl.close();
   } else if (playerGuess > secretNumber) {
-    console.log("残念！もっと小さい数字です。");
+    console.log("うーん、もうちょっと小さい数字だよ〜。");
     promptGuess();
   } else {
-    console.log("残念！もっと大きい数字です。");
+    console.log("うーん、もうちょっと大きい数字かな〜。");
     promptGuess();
   }
 }
@@ -29,17 +35,24 @@ const rl = readline.createInterface({
 });
 
 function promptGuess() {
-  rl.question('数字を入力してください: ', (answer: string) => {
+  rl.question(`数字を入力してください（残り${maxAttempts - attempts}回以内）: `, (answer: string) => {
     const playerGuess = parseInt(answer, 10);
     if (!isNaN(playerGuess)) {
       guessNumber(playerGuess);
     } else {
-      console.log('有効な数字を入力してください。');
+      console.log("あれれ？数字を入れてね〜。");
       promptGuess();
     }
   });
 }
 
-// ゲームを実行
-console.log("1から10までの数字を当ててみてください。");
-promptGuess();
+function startGame() {
+  rl.question("ゲームを始めるには何かキーを押してください: ", () => {
+    console.log("1から10までの数字を当ててみてね！奈緒ちゃんが応援してるよ♪");
+    promptGuess();
+  });
+}
+
+// ゲームタイトルを表示
+console.log("=== 奈緒ちゃんの数当てゲーム ===");
+startGame();
