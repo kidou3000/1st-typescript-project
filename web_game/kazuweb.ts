@@ -47,7 +47,13 @@ function startGame() {
 }
 
 // HTMLのボタンにイベントリスナーを追加
-document.getElementById('guessButton').addEventListener('click', guessNumber);
+document.getElementById('guessButton').addEventListener('click', () => {
+  const inputElement = document.getElementById('guessInput') as HTMLInputElement;
+  if (inputElement) {
+    inputElement.select();
+  }
+  guessNumber();
+});
 
 // ゲームタイトルを表示してスタート
 window.onload = () => {
