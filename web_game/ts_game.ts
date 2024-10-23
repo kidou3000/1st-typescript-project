@@ -14,10 +14,10 @@ const maxAttempts = 4;
 function guessNumber(playerGuess: number) {
   attempts++;
   if (playerGuess === secretNumber) {
-    console.log("やったね！正解だよ〜♪");
+    console.log("やったね！正解だよ〜♪\nゲームクリア！おめでとう！");
     rl.close();
   } else if (attempts >= maxAttempts) {
-    console.log(`残念だったね…正解は ${secretNumber} だったよ。またチャレンジしてね！`);
+    console.log(`残念だったね…正解は ${secretNumber} だったよ。またチャレンジしてね！\nゲームオーバー…`);
     rl.close();
   } else if (playerGuess > secretNumber) {
     console.log("うーん、もうちょっと小さい数字だよ〜。");
@@ -54,5 +54,6 @@ function startGame() {
 }
 
 // ゲームタイトルを表示
-console.log("=== 奈緒ちゃんの数当てゲーム ===");
+console.log("");
+console.log("=== 奈緒ちゃんの数当てゲーム ===\n");
 startGame();
