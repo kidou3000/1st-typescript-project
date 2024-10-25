@@ -5,22 +5,10 @@ const config: Phaser.Types.Core.GameConfig = {
   width: 800,
   height: 600,
   scene: {
-    preload: preload,
-    create: create,
-    update: update,
+    create: function () {
+      this.add.text(100, 100, 'Hello Phaser!', { fill: '#0f0' });
+    },
   },
 };
 
-const game = new Phaser.Game(config);
-
-function preload() {
-  // ここで画像や音を読み込む
-}
-
-function create() {
-  // ここで画面にオブジェクトを配置する
-}
-
-function update() {
-  // ここでゲームロジックを書く
-}
+new Phaser.Game(config);
