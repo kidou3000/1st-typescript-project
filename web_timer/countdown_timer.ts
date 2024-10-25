@@ -1,110 +1,17 @@
-// HTML と TypeScript を連携して、ブラウザ上で動くシンプルなカウントダウンタイマー
-// まず、HTML 側に以下のような要素を用意してね。
-/*
-<div id="timerApp">
-  <input type="number" id="timeInput" placeholder="分を入力" min="1">
-  <button id="startStopButton">スタート / ストップ</button>
-  <button id="resetButton">リセット</button>
-  <div id="timerDisplay">05:00</div>
-  <div id="progressBarContainer">
-    <div id="progressBar"></div>
-  </div>
-</div>
-
-<style>
-  #timerApp {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    max-width: 500px;
-    margin: 0 auto;
-    padding: 20px;
-    border: 2px solid #ccc;
-    border-radius: 10px;
-    background-color: #f9f9f9;
-  }
-  
-  #timeInput {
-    width: 80%;
-    font-size: 1.5em;
-    padding: 15px 25px;
-    margin-bottom: 20px;
-    text-align: center;
-  }
-  
-  #startStopButton, #resetButton {width: 50%; font-size: 1.4em;
-    padding: 10px;
-    margin: 10px;
-    cursor: pointer;
-    border: none;
-    border-radius: 5px;
-    background-color: #007bff;
-    color: white;
-    transition: background-color 0.3s ease;
-  }
-  
-  #resetButton {
-    background-color: #dc3545;
-  }
-  
-  #startStopButton:hover {
-    background-color: #0056b3;
-  }
-  
-  #resetButton:hover {
-    background-color: #c82333;
-  }
-  
-  #timerDisplay {
-    font-size: 3em;
-    margin: 20px 0;
-    text-align: center;
-  }
-  
-  #progressBarContainer {
-    width: 100%;
-    height: 40px;
-    background-color: #f3f3f3;
-    border: 1px solid #ccc;
-    margin-top: 20px;
-    border-radius: 5px;
-    overflow: hidden;
-  }
-  
-  #progressBar {
-    width: 100%;
-    height: 100%;
-    background-color: #4caf50;
-  }
-  
-  #progressBar.blinking {
-    animation: blink 1s infinite alternate;
-  }
-
-  @keyframes blink {
-    0% { background-color: #4caf50; }
-    100% { background-color: #d4ffd4; }
-  }
-
-  #progressBar.warning {
-    animation: warningBlink 1s infinite alternate;
-  }
-
-  @keyframes warningBlink {
-    0% { background-color: #ff5252; }
-    100% { background-color: #ffdada; }
-  }
-</style>
-
-<script src="countdown_timer.js" defer></script>
-*/
-
 document.addEventListener('DOMContentLoaded', () => {
-  const timerDisplay = document.getElementById('timerDisplay') as HTMLDivElement;
-  const startStopButton = document.getElementById('startStopButton') as HTMLButtonElement;
-  const resetButton = document.getElementById('resetButton') as HTMLButtonElement;
-  const progressBar = document.getElementById('progressBar') as HTMLDivElement;
-  const timeInput = document.getElementById('timeInput') as HTMLInputElement;
+  const timerDisplay = document.getElementById('timerDisplay') as HTMLDivElement | null;
+  const startStopButton = document.getElementById('startStopButton') as HTMLButtonElement | null;
+  if (startStopButton) {
+    startStopButton.style.whiteSpace = 'nowrap'; // ボタンのテキストが改行されないように設定
+  }
+  const resetButton = document.getElementById('resetButton') as HTMLButtonElement | null;
+  const progressBar = document.getElementById('progressBar') as HTMLDivElement | null;
+  const timeInput = document.getElementById('timeInput') as HTMLInputElement | null;
+
+  if (!timerDisplay || !startStopButton || !resetButton || !progressBar || !timeInput) {
+    console.error('必要な要素が見つかりません。HTML構造を確認してください。');
+    return;
+  }
 
   let intervalId: number | null = null;
   let remainingTime = 300; // 初期設定5分（300秒）
@@ -114,7 +21,9 @@ document.addEventListener('DOMContentLoaded', () => {
   let blinkTitleIntervalId: number | null = null;
 
   // 初期表示を5分に設定
-  timerDisplay.textContent = '5:00';
+timerDisplay.textContent = '5:00';
+progressBar.style.width = '0%'; // タイマー終了時に幅をリセット // プログレスバーの初期幅設定
+  progressBar.style.width = '100%'; // プログレスバー初期化
 
   function startTimer(duration: number) {
     if (intervalId !== null) {
@@ -132,8 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
       document.title = `残り時間: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 
       // プログレスバーの更新
-      const progressPercentage = (timer / initialTime) * 100;
-      progressBar.style.width = `${progressPercentage}%`;
+const progressPercentage = (timer / initialTime) * 100;
+progressBar.style.width = `${progressPercentage}%`; // プログレスバーの幅を更新
 
       // 残り20%以下の場合、警告色で点滅させる
       if (progressPercentage <= 20) {
@@ -169,14 +78,35 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 1000);
   }
 
+  function stopTimer() {
+    if (intervalId !== null) {
+      clearInterval(intervalId);
+      intervalId = null;
+    }
+    isRunning = false;
+    progressBar.classList.remove('blinking');
+    document.title = originalTitle;
+    if (blinkTitleIntervalId !== null) {
+      clearInterval(blinkTitleIntervalId);
+      blinkTitleIntervalId = null;
+    }
+  }
+
   startStopButton.addEventListener('click', () => {
     if (!isRunning) {
-      // タイマーの初期設定をユーザー入力から取得する
+      if (remainingTime <= 0) {
+        // タイマーが終了していた場合、初期化
+        remainingTime = initialTime;
+        timerDisplay.textContent = `${Math.floor(initialTime / 60)}:00`;
+        progressBar.style.width = '100%';
+      }
+
       const userInput = parseInt(timeInput.value, 10);
       if (!isNaN(userInput) && userInput > 0) {
         initialTime = userInput * 60;
         remainingTime = initialTime;
         timerDisplay.textContent = `${userInput}:00`;
+        progressBar.style.width = '100%'; // プログレスバーを再設定
       }
       // タイマーをスタートする
       startTimer(remainingTime);
@@ -191,41 +121,17 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } else {
       // タイマーをストップする
-      if (intervalId !== null) {
-        clearInterval(intervalId);
-        intervalId = null;
-      }
-      isRunning = false;
-      progressBar.classList.remove('blinking');
-      // タブのタイトルを元に戻す
-      document.title = originalTitle;
-      if (blinkTitleIntervalId !== null) {
-        clearInterval(blinkTitleIntervalId);
-        blinkTitleIntervalId = null;
-        document.title = originalTitle;
-      }
+      stopTimer();
     }
   });
 
   resetButton.addEventListener('click', () => {
-    // リセットボタンを押すとタイマーを初期設定に戻す
-    if (intervalId !== null) {
-      clearInterval(intervalId);
-      intervalId = null;
-    }
+    stopTimer();  // タイマーを停止
     remainingTime = initialTime;
     const minutes = Math.floor(initialTime / 60);
     timerDisplay.textContent = `${minutes}:00`;
     progressBar.style.width = '100%';
     progressBar.classList.remove('blinking');
     progressBar.classList.remove('warning');
-    isRunning = false;
-    // タブのタイトルを元に戻す
-    document.title = originalTitle;
-    if (blinkTitleIntervalId !== null) {
-      clearInterval(blinkTitleIntervalId);
-      blinkTitleIntervalId = null;
-      document.title = originalTitle;
-    }
   });
 });
