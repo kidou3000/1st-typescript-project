@@ -2,9 +2,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const timerDisplay = document.getElementById('timerDisplay') as HTMLDivElement | null;
   const startStopButton = document.getElementById('startStopButton') as HTMLButtonElement | null;
   if (startStopButton) {
-    startStopButton.style.whiteSpace = 'nowrap'; // ボタンのテキストが改行されないように設定
-  }
+  startStopButton.style.whiteSpace = 'nowrap'; // ボタンのテキストが改行されないように設定
+  startStopButton.style.width = '100%'; // ボタンの幅を大きく設定
+  startStopButton.style.padding = window.innerWidth <= 600 ? '30px' : '20px'; // スマホでは高さを大きく、PCでは元の高さに // スマホでは高さをさらに大きく、他は20px
+  startStopButton.style.fontSize = window.innerWidth <= 600 ? '1.6em' : '2em'; // スマホでのフォントサイズ調整
+} 
   const resetButton = document.getElementById('resetButton') as HTMLButtonElement | null;
+  if (resetButton) {
+    resetButton.style.width = '100%'; // ボタンの幅を大きく設定
+    resetButton.style.padding = window.innerWidth <= 600 ? '30px' : '20px'; // スマホでは高さを大きく、PCでは元の高さに // スマホでは高さをさらに大きく、他は30px
+    resetButton.style.fontSize = window.innerWidth <= 600 ? '1.6em' : '2em'; // スマホでのフォントサイズ調整
+  }
   const progressBar = document.getElementById('progressBar') as HTMLDivElement | null;
   const timeInput = document.getElementById('timeInput') as HTMLInputElement | null;
 
@@ -22,8 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 初期表示を5分に設定
 timerDisplay.textContent = '5:00';
-progressBar.style.width = '0%'; // タイマー終了時に幅をリセット // プログレスバーの初期幅設定
-  progressBar.style.width = '100%'; // プログレスバー初期化
+progressBar.style.width = '100%'; // プログレスバー初期化
 
   function startTimer(duration: number) {
     if (intervalId !== null) {
@@ -61,6 +68,7 @@ progressBar.style.width = `${progressPercentage}%`; // プログレスバーの�
         clearInterval(intervalId!);
         intervalId = null;
         timerDisplay.textContent = 'タイマーが終了しました！';
+timerDisplay.style.fontSize = window.innerWidth <= 600 ? '1.2em' : '3em'; // スマホの時は文字サイズを小さくする
         progressBar.style.width = '0%';
         progressBar.classList.remove('blinking');
         progressBar.classList.remove('warning');
