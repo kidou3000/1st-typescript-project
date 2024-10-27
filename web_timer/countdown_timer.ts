@@ -1,18 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
   const timerDisplay = document.getElementById('timerDisplay') as HTMLDivElement | null;
   const startStopButton = document.getElementById('startStopButton') as HTMLButtonElement | null;
-  if (startStopButton) {
-  startStopButton.style.whiteSpace = 'nowrap'; // ボタンのテキストが改行されないように設定
-  startStopButton.style.width = '100%'; // ボタンの幅を大きく設定
-  startStopButton.style.padding = window.innerWidth <= 600 ? '30px' : '20px'; // スマホでは高さを大きく、PCでは元の高さに // スマホでは高さをさらに大きく、他は20px
-  startStopButton.style.fontSize = window.innerWidth <= 600 ? '1.6em' : '2em'; // スマホでのフォントサイズ調整
-} 
+   
   const resetButton = document.getElementById('resetButton') as HTMLButtonElement | null;
-  if (resetButton) {
-    resetButton.style.width = '100%'; // ボタンの幅を大きく設定
-    resetButton.style.padding = window.innerWidth <= 600 ? '30px' : '20px'; // スマホでは高さを大きく、PCでは元の高さに // スマホでは高さをさらに大きく、他は30px
-    resetButton.style.fontSize = window.innerWidth <= 600 ? '1.6em' : '2em'; // スマホでのフォントサイズ調整
-  }
+  
   const progressBar = document.getElementById('progressBar') as HTMLDivElement | null;
   const timeInput = document.getElementById('timeInput') as HTMLInputElement | null;
 
@@ -29,8 +20,11 @@ document.addEventListener('DOMContentLoaded', () => {
   let blinkTitleIntervalId: number | null = null;
 
   // 初期表示を5分に設定
-timerDisplay.textContent = '5:00';
+timerDisplay.textContent = '5:00'; // 初期表示を正しく設定
+timerDisplay.style.fontSize = '5em'; // タイマー表示部分をさらに大きく
 progressBar.style.width = '100%'; // プログレスバー初期化
+  // スタート・ストップボタンの幅設定を削除してCSSで管理 // ボタン幅を半分に揃える
+  // リセットボタンの幅設定を削除してCSSで管理 // ボタン幅を半分に揃える // ボタン幅を揃える
 
   function startTimer(duration: number) {
     if (intervalId !== null) {
@@ -54,9 +48,12 @@ progressBar.style.width = `${progressPercentage}%`; // プログレスバーの�
       // 残り20%以下の場合、警告色で点滅させる
       if (progressPercentage <= 20) {
         progressBar.classList.add('warning');
+        // タイマー表示部分の警告色はプログレスバーにのみ適用
+        // タイマー表示の警告色の設定を削除
         progressBar.classList.remove('blinking');
       } else {
         progressBar.classList.remove('warning');
+        timerDisplay.classList.remove('warning'); // タイマー表示部分の警告色を解除
         if (isRunning) {
           progressBar.classList.add('blinking');
         } else {
@@ -64,14 +61,9 @@ progressBar.style.width = `${progressPercentage}%`; // プログレスバーの�
         }
       }
 
-      if (timer < 0) {
-        clearInterval(intervalId!);
-        intervalId = null;
-        timerDisplay.textContent = 'タイマーが終了しました！';
-timerDisplay.style.fontSize = window.innerWidth <= 600 ? '1.2em' : '3em'; // スマホの時は文字サイズを小さくする
-        progressBar.style.width = '0%';
-        progressBar.classList.remove('blinking');
-        progressBar.classList.remove('warning');
+      if (timer < 0) {$1progressBar.classList.remove('warning');
+        // タイマー表示部分の色のリセットを削除
+        progressBar.style.width = '0%'; // タイマー終了時にプログレスバーもリセット // タイマー終了時に警告色をリセット
         isRunning = false;
 
         // タイマー終了時にタブのタイトルを点滅させる
