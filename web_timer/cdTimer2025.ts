@@ -16,14 +16,19 @@
 //   // 使い方
 //   countdown(10); // 10秒のカウントダウン
   
-function cowuntdown(seconds: number):void{
+function countdown(seconds:number):void{
   let remaining=seconds;
 
   const intervalId=setInterval(()=>{
-    console.log("write!");
 
-  }
-,1000);
+    console.log(remaining);
+    remaining--;
+    if(remaining<0){
+      clearInterval(intervalId);
+      console.log("Time's up!");
+    }
+  },1000);
+
 }
 
-cowuntdown(10);
+countdown(10);
